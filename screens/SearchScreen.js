@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { API_KEY } from '../services/config';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import BurgerMenu from '../components/BurgerMenu';
+import SearchHistory from '../components/SearchHistory';
 
 export default function SearchScreen() {
   const [city, setCity] = useState('');
@@ -11,6 +13,27 @@ export default function SearchScreen() {
   const [searchHistory, setSearchHistory] = useState([]);
   const navigation = useNavigation();
 
+  // Charger l'historique au montage
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const history = await AsyncStorage.getItem('searchHistory');
+        if (history) setSearchHistory(JSON.parse(history));
+      } catch (e) {
+        console.error('Erreur lors du chargement de l\'historique :', e);
+      }
+    };
+    loadHistory();
+  }, []);
+
+  // Sauvegarder l'historique à chaque modification
+  const saveHistory = async (history) => {
+    try {
+      await AsyncStorage.setItem('searchHistory', JSON.stringify(history));
+    } catch (e) {
+      console.error('Erreur lors de la sauvegarde de l\'historique :', e);
+    }
+  };
 
   const handleSearch = async (selectedCity = null) => {
     const cityToSearch = selectedCity || city;
@@ -21,7 +44,6 @@ export default function SearchScreen() {
     }
 
     try {
-      // Récupération de la géolocalisation de la ville
       const geoResponse = await axios.get('https://api.openweathermap.org/geo/1.0/direct', {
         params: {
           q: cityToSearch,
@@ -33,20 +55,17 @@ export default function SearchScreen() {
       if (geoResponse.data && geoResponse.data.length > 0) {
         const { lat, lon } = geoResponse.data[0];
 
-        // Mise à jour de l'historique des recherches
+        // Mise à jour et sauvegarde de l'historique
         setSearchHistory((prevHistory) => {
-          const updatedHistory = [...prevHistory];
-          if (!updatedHistory.includes(cityToSearch)) {
-            updatedHistory.unshift(cityToSearch); // Ajouter la ville au début
-          }
-          return updatedHistory.slice(0, 5); // Limiter à 5 recherches
+          let updatedHistory = prevHistory.filter(item => item !== cityToSearch);
+          updatedHistory.unshift(cityToSearch);
+          updatedHistory = updatedHistory.slice(0, 5);
+          saveHistory(updatedHistory);
+          return updatedHistory;
         });
 
         setErrorMsg(null);
-
-        // Rediriger vers la page d'accueil avec les coordonnées
-        selectedCity = "";
-        setCity(selectedCity);
+        setCity('');
         navigation.navigate('Accueil', { latitude: lat, longitude: lon });
       } else {
         setErrorMsg('Ville non trouvée.');
@@ -74,19 +93,7 @@ export default function SearchScreen() {
       {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
       <View style={styles.historyContainer}>
         <Text style={styles.historyTitle}>Dernières recherches :</Text>
-        {searchHistory.length === 0 ? (
-          <Text style={styles.placeholder}>Aucune recherche récente.</Text>
-        ) : (
-          <FlatList
-            data={searchHistory}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSearch(item)}>
-                <Text style={styles.historyItem}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        )}
+        <SearchHistory history={searchHistory} onSelect={handleSearch} />
       </View>
     </View>
   );
