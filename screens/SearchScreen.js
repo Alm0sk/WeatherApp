@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList } from 'r
 import { useNavigation } from '@react-navigation/native';
 import { API_KEY } from '../services/config';
 import axios from 'axios';
+import BurgerMenu from '../components/BurgerMenu';
 
 export default function SearchScreen() {
   const [city, setCity] = useState('');
@@ -58,7 +59,9 @@ export default function SearchScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Recherche</Text>
+      <View style={styles.header}>
+        <BurgerMenu />
+      </View>
       <TextInput
         style={styles.input}
         placeholder="Entrez le nom d'une ville..."

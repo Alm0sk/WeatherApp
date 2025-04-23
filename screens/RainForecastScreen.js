@@ -4,6 +4,7 @@ import MapView, { UrlTile } from 'react-native-maps';
 import { useRoute } from '@react-navigation/native';
 import { getCurrentLocation } from '../services/LocationService';
 import { API_KEY } from '../services/config';
+import BurgerMenu from '../components/BurgerMenu';
 
 export default function RainForecastScreen() {
   const [region, setRegion] = useState(null); // Initialiser à null
@@ -41,7 +42,7 @@ export default function RainForecastScreen() {
     };
 
     updateRegion();
-  }, [route.params]); // Surveiller les changements dans route.params, ne marche pas...
+  }, [route.params]); // Surveiller les changements dans route.params, ne marche
 
   if (!region) {
     return (

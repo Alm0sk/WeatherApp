@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Provider as PaperProvider } from 'react-native-paper';
 
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
@@ -73,16 +74,18 @@ export default function App() {
 
 
   return (
-    <NavigationContainer theme={MyTheme}>
-      <ImageBackground 
-        source={require('./assets/Backgrounds/base.jpg')}
-        style={styles.imageBackground}
-        resizeMode="cover"
-      >
-        <NavigationBar />
-        <StatusBar style="auto" />
-      </ImageBackground>
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer theme={MyTheme}>
+        <ImageBackground 
+          source={require('./assets/Backgrounds/base.jpg')}
+          style={styles.imageBackground}
+          resizeMode="cover"
+        >
+          <NavigationBar />
+          <StatusBar style="auto" />
+        </ImageBackground>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
 

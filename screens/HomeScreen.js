@@ -6,6 +6,7 @@ import CurrentWeather from '../components/CurrentWeather';
 import ForecastWeather from '../components/ForecastWeather';
 import { getCurrentLocation } from '../services/LocationService';
 import { API_KEY } from '../services/config';
+import BurgerMenu from '../components/BurgerMenu';
 
 export default function HomeScreen() {
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
@@ -68,7 +69,9 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Accueil</Text>
+      <View style={styles.header}>
+        <BurgerMenu />
+      </View>
       {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
       {weatherData ? (
         <>
