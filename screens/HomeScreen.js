@@ -13,13 +13,14 @@ import CurrentWeather from '../components/CurrentWeather';
 import ForecastWeather from '../components/ForecastWeather';
 import { getCurrentLocation } from '../services/LocationService';
 
+import { API_KEY } from '../services/config';
+
 export default function HomeScreen() {
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
   
-  const API = 'd6def4924ad5f9a9b59f3ae895b234cb';
 
   // Récupération initiale de la position
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function HomeScreen() {
         params: {
           lat: latitude,
           lon: longitude,
-          appid: API,
+          appid: API_KEY,
           units: 'metric',
           lang: 'fr'
         }

@@ -13,6 +13,7 @@ import ForecastWeather from './components/ForecastWeather';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import NavigationBar from './components/NavigationBar';
 
+import { API_KEY } from './services/config';
 
 export default function App() {
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
@@ -20,7 +21,6 @@ export default function App() {
   const [city, setCity] = useState('');
   const [errorMsg, setErrorMsg] = useState(null);
   
-  const API = 'd6def4924ad5f9a9b59f3ae895b234cb';
 
   const MyTheme = {
   ...DefaultTheme,
@@ -58,7 +58,7 @@ export default function App() {
         params: {
           lat: latitude,
           lon: longitude,
-          appid: API,
+          appid: API_KEY,
           units: 'metric',
           lang: 'fr'
         }
