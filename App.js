@@ -10,6 +10,10 @@ import { getCurrentLocation } from './services/LocationService';
 import CurrentWeather from './components/CurrentWeather';
 import ForecastWeather from './components/ForecastWeather';
 
+import { NavigationContainer } from '@react-navigation/native';
+import NavigationBar from './components/NavigationBar';
+
+
 export default function App() {
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
   const [weatherData, setWeatherData] = useState(null);
@@ -84,34 +88,38 @@ export default function App() {
   };
 
   return (
-    <ImageBackground 
-      source={require('./assets/Backgrounds/base.jpg')}
-      style={styles.imageBackground}
-    >
-      <View style={styles.container}>
-        <View style={styles.searchContainer}>
-          <TextInput 
-            style={styles.input}
-            placeholder="Chercher une ville ..."
-            value={city}
-            onChangeText={setCity}
-          />
-          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-            <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="#000" />
-          </TouchableOpacity>
+    <NavigationContainer>
+      <ImageBackground 
+        source={require('./assets/Backgrounds/base.jpg')}
+        style={styles.imageBackground}
+        resizeMode="cover"
+      >
+        <View style={styles.container}>
+          <View style={styles.searchContainer}>
+            <TextInput 
+              style={styles.input}
+              placeholder="Chercher une ville ..."
+              value={city}
+              onChangeText={setCity}
+            />
+            <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+              <FontAwesomeIcon icon={faMagnifyingGlass} size={20} color="#000" />
+            </TouchableOpacity>
+          </View>
+          {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+          {weatherData ? (
+            <>
+              <CurrentWeather data={weatherData} />
+              <ForecastWeather data={weatherData} />
+            </>
+          ) : (
+            <Text>Chargement des données météo...</Text>
+          )}
+          <NavigationBar />
+          <StatusBar style="auto" />
         </View>
-        {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
-        {weatherData ? (
-          <>
-            <CurrentWeather data={weatherData} />
-            <ForecastWeather data={weatherData} />
-          </>
-        ) : (
-          <Text>Chargement des données météo...</Text>
-        )}
-        <StatusBar style="auto" />
-      </View>
-    </ImageBackground>
+      </ImageBackground>
+    </NavigationContainer>
   );
 }
 
@@ -123,7 +131,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'rgba(255, 255, 255, 0)',
-    alignItems: 'center',
+    alignItems: 'stretch',
     justifyContent: 'flex-start',
     padding: 20,
   },
