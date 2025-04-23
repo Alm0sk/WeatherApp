@@ -75,9 +75,8 @@ export default function ForecastWeather({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     marginVertical: 20,
-    paddingBottom: 20,
   },
   dayContainer: {
     marginRight: 10,

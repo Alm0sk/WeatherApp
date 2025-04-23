@@ -18,7 +18,6 @@ export default function NavigationBar() {
             backgroundColor: 'rgba(255, 255, 255, 0.75)',
             borderTopWidth: 0,
             elevation: 0,
-            shadowColor: 'transparent',
         },
         tabBarIcon: ({ color, size }) => {
           let iconName;

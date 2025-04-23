@@ -1,20 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ImageBackground, TextInput, TouchableOpacity } from 'react-native';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+/*
+-  Cette page affiche la météo du jour détaillée (température, humidité, vent, etc.) en fonction de la localisation actuelle. 
+-  Utilisez l’API OpenWeather pour récupérer les données météo.
+-  Affichez les informations dans un composant structuré avec des icônes et des textes.
+*/
 
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import CurrentWeather from '../components/CurrentWeather';
+import ForecastWeather from '../components/ForecastWeather';
+import { getCurrentLocation } from '../services/LocationService';
 
-import { getCurrentLocation } from './services/LocationService';
-import CurrentWeather from './components/CurrentWeather';
-import ForecastWeather from './components/ForecastWeather';
-
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import NavigationBar from './components/NavigationBar';
-
-
-export default function App() {
+export default function HomeScreen() {
   const [coordinates, setCoordinates] = useState({ latitude: null, longitude: null });
   const [weatherData, setWeatherData] = useState(null);
   const [city, setCity] = useState('');
@@ -22,15 +21,7 @@ export default function App() {
   
   const API = 'd6def4924ad5f9a9b59f3ae895b234cb';
 
-  const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: 'transparent',
-  },
-};
-
-  // Récupération de la position au démarrage
+  // Récupération initiale de la position
   useEffect(() => {
     getCurrentLocation()
       .then((position) => {
@@ -41,7 +32,7 @@ export default function App() {
       })
       .catch((error) => {
         console.error('Erreur lors de la récupération de la position:', error);
-        setErrorMsg('Erreur lors de la récupération de la position');
+        setErrorMsg('Erreur de géolocalisation');
       });
   }, []);
 
@@ -66,7 +57,7 @@ export default function App() {
       setWeatherData(response.data);
       setErrorMsg(null);
     } catch (error) {
-      console.error("Erreur lors de la récupération du temps:", error);
+      console.error("Erreur lors de la récupération des données météo:", error);
       setErrorMsg("Erreur lors de la récupération des données météo");
     }
   };
@@ -90,53 +81,44 @@ export default function App() {
         setErrorMsg("Ville non trouvée");
       }
     } catch (error) {
-      console.error("Erreur lors de la géolocalisation de la ville:", error);
+      console.error("Erreur lors de la recherche de la ville:", error);
       setErrorMsg("Erreur lors de la recherche de la ville");
     }
   };
 
   return (
-    <NavigationContainer theme={MyTheme}>
-      <ImageBackground 
-        source={require('./assets/Backgrounds/base.jpg')}
-        style={styles.imageBackground}
-        resizeMode="cover"
-      >
-        <NavigationBar />
-        <StatusBar style="auto" />
-      </ImageBackground>
-    </NavigationContainer>
+    <View style={styles.container}>
+      <Text style={styles.title}>Accueil</Text>
+      {errorMsg && <Text style={styles.error}>{errorMsg}</Text>}
+      {weatherData ? (
+        <>
+          <CurrentWeather data={weatherData} />
+          <ForecastWeather data={weatherData} />
+        </>
+      ) : (
+        <Text>Chargement des données météo...</Text>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  imageBackground: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0)',
+    padding: 16,
+    backgroundColor: 'transparent',
     alignItems: 'stretch',
     justifyContent: 'flex-start',
-    padding: 20,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
   },
   searchContainer: {
     flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 0,
-  },
-  searchButton: {
-    backgroundColor: '#7287fd',
-    borderRadius: 5,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    marginBottom: 10,
   },
   input: {
     flex: 1,
@@ -145,6 +127,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginRight: 10,
     paddingHorizontal: 10,
+  },
+  searchButton: {
+    backgroundColor: '#7287fd',
+    borderRadius: 5,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   error: {
     color: 'red',

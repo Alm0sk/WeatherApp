@@ -28,6 +28,7 @@ export default function CurrentWeather({ data }) {
         <ShowIcon icon={current.weather[0].icon} resolution="2x" size={125} />
       </View>
       <Text style={styles.temperature}>{Math.round(current.main.temp)}°C</Text>
+      <Text style={styles.description}>Humidité : {current.main.humidity}% - Vent : {Math.round(current.wind.speed)} km/h</Text>
       <Text style={styles.description}>{current.weather[0].description}</Text>
     </View>
   );
@@ -35,7 +36,6 @@ export default function CurrentWeather({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    margin: 20,
     alignItems: 'center',
   },
   city: {
