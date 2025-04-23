@@ -71,29 +71,6 @@ export default function App() {
     }
   };
 
-  // Recherche par ville
-  const handleSearch = async () => {
-    if (city.trim() === '') return;
-    try {
-      const geoResponse = await axios.get('https://api.openweathermap.org/geo/1.0/direct', {
-        params: {
-          q: city,
-          limit: 1,
-          appid: API
-        }
-      });
-      if (geoResponse.data && geoResponse.data.length > 0) {
-        const { lat, lon } = geoResponse.data[0];
-        setCoordinates({ latitude: lat, longitude: lon });
-        setErrorMsg(null);
-      } else {
-        setErrorMsg("Ville non trouvée");
-      }
-    } catch (error) {
-      console.error("Erreur lors de la géolocalisation de la ville:", error);
-      setErrorMsg("Erreur lors de la recherche de la ville");
-    }
-  };
 
   return (
     <NavigationContainer theme={MyTheme}>
